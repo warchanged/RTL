@@ -1,0 +1,1 @@
+MODEL_NAME=/root/autodl-tmp/models/Qwen3-0.6B, MASTER_ADDR=autodl-container-30374da1c1-87d8637a, BASE_PORT=8765, NUM_GPUS=1

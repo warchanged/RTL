@@ -1,0 +1,101 @@
+# 默认配置覆盖设置
+defaults:
+  - override /model_cfg@_global_: qwen7bi  # 使用qwen7bi模型配置
+  - override /data_cfg@_global_: teacher_bespoke_stratos  # 使用teacher_bespoke_stratos数据配置
+  - override /trainer_cfg@_global_: teacher_grpo  # 使用teacher_grpo训练器配置
+  - _self_
+
+# 模型路径
+model_name_or_path: /root/autodl-tmp/models/Qwen3-0.6B
+
+# 使用bf16精度训练
+bf16: true
+
+# 训练步数和轮数设置
+max_steps: 125  # 最大训练步数
+num_train_epochs: 1.0  # 训练轮数
+
+# 模型保存策略
+save_strategy: "steps"  # 按步数保存
+
+save_steps: 25  # 每25步保存一次
+do_eval: true  # 启用评估
+save_final_model: true  # 保存最终模型
+
+# 评估策略
+eval_strategy: steps  # 按步数评估
+eval_steps: 4  # 每4步评估一次
+
+# 日志记录设置
+logging_steps: 1  # 每步记录日志
+logging_strategy: steps  # 按步数记录日志
+
+# 批次大小设置
+train_batch_size: 8  # 训练批次大小
+per_device_train_batch_size: 1  # 每个设备的批次大小
+generation_aggregation_steps: 8  # 生成聚合步数
+
+# 生成参数
+num_generations: 2  # 生成数量
+temperature: 0.7  # 生成温度
+unbias_log_probabilities: true  # 无偏对数概率
+
+# 学习率和优化参数
+learning_rate: 0.000001  # 学习率
+beta: 0.04  # beta参数
+
+# 参考模型同步设置
+sync_ref_model: true  # 同步参考模型
+ref_model_mixup_alpha: 0.9  # 参考模型混合alpha
+ref_model_sync_steps: 32  # 参考模型同步步数
+
+# 学生模型设置
+student_model: "bespokelabs/Bespoke-Stratos-7B"  # 学生模型名称
+student_model_init_kwargs: null  # 学生模型初始化参数
+
+# 模型卸载设置
+offload_untrained_models: true  # 卸载未训练的模型
+
+# 序列长度限制
+max_prompt_length: 4096  # 最大提示长度
+max_completion_length: 4096  # 最大完成长度
+
+# 奖励函数系数设置
+answer_log_prob_coeff: [1, 0.01]  # 答案对数概率系数
+kl_penalty_reward_coeff: [3, 0.03]  # KL惩罚奖励系数
+normalize_log_prob_fn: null  # 对数概率归一化函数
+clip_log_prob: 100000  # 对数概率裁剪值
+normalize_kl_fn: null  # KL归一化函数
+clip_kl: 100000  # KL裁剪值
+reduction_log_prob_fn: ["mean", "min"]  # 对数概率缩减函数
+reduction_kl_fn: ["mean", "max"]  # KL缩减函数
+use_schulman_kl_estimation: false  # 是否使用Schulman KL估计
+not_matched_penalty: -1.0  # 不匹配惩罚
+unbias_teacher_log_probs: true  # 无偏教师对数概率
+unbias_student_log_probs_temp: 0.7  # 无偏学生对数概率温度
+
+# 完成结果保存概率
+save_completions_probability: 0.1
+
+# 学习率调度器设置
+lr_scheduler_type: "constant"  # 学习率调度器类型
+lr_scheduler_kwargs: ~  # 学习率调度器参数
+
+# Wandb项目设置
+wandb_project: rl4lm_teacher  # Wandb项目名称
+
+# 日志上下文名称
+log_ctx_name: gr${num_generations}_${max_prompt_length}ctx_${max_completion_length}gen
+
+# Wandb运行名称
+wandb_run_name: ${trainer_log_name}
+
+# 输出目录
+output_dir: ${results_dir}/rlt_teacher/${exp_name}
+
+# VLLM服务器设置
+vllm_port: 8765  # VLLM端口
+use_vllm: false  # 是否使用VLLM
+use_vllm_server: true  # 是否使用VLLM服务器
+vllm_host: autodl-container-30374da1c1-87d8637a
+num_vllm_clients: 1
